@@ -1,0 +1,84 @@
+:root {
+  /* Exact Colors from Reference Mockup */
+  --color-purple-bg: #421d6e;
+  --color-purple-navbar: #4f2c85;
+  --color-purple-dark: #2a1245;
+  --color-purple-card: #36185c;
+  --color-purple-border: rgba(255, 255, 255, 0.18);
+
+  --color-yellow-gold: #febb2b;
+  --color-yellow-slogan: #f7b638;
+  --color-yellow-light: #ffd54f;
+
+  --color-text-white: #ffffff;
+  --color-text-muted: rgba(255, 255, 255, 0.78);
+  --color-text-dark: #2a1245;
+  --color-text-card-muted: #666666;
+
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--color-purple-bg);
+  color: var(--color-text-white);
+  scroll-behavior: smooth;
+  line-height: 1.5;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  background-color: var(--color-purple-bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* Common Badge Pill */
+.ref-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.95rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+}

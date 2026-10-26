@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @db.VarChar(50)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  namaLengkap  String   @map("nama_lengkap") @db.VarChar(100)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("admins")
+}
+
+model Berita {
+  id             Int       @id @default(autoincrement())
+  judul          String    @db.VarChar(255)
+  slug           String    @unique @db.VarChar(255)
+  kategori       String?   @db.VarChar(100)
+  ringkasan      String?   @db.Text
+  konten         String    @db.LongText
+  gambarUtama    String?   @map("gambar_utama") @db.VarChar(500)
+  captionGambar  String?   @map("caption_gambar") @db.VarChar(255)
+  penulis        String    @default("Admin Racana") @db.VarChar(100)
+  status         String    @default("draft") @db.VarChar(20)
+  tanggalPublish DateTime? @map("tanggal_publish")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  @@index([status, tanggalPublish(sort: Desc)], name: "idx_berita_status_publish")
+  @@map("berita")
+}
+
+model PeriodeKepengurusan {
+  id             Int       @id @default(autoincrement())
+  namaPeriode    String    @map("nama_periode") @db.VarChar(50)
+  gudepPutra     String    @map("gudep_putra") @db.VarChar(20)
+  gudepPutri     String    @map("gudep_putri") @db.VarChar(20)
+  tanggalMulai   DateTime? @map("tanggal_mulai") @db.Date
+  tanggalSelesai DateTime? @map("tanggal_selesai") @db.Date
+  isAktif        Boolean   @default(false) @map("is_aktif")
+  keterangan     String?   @db.Text
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  pembina  Pembina[]
+  pengurus Pengurus[]
+  divisi   Divisi[]
+
+  @@map("periode_kepengurusan")
+}
+
+model Pembina {
+  id        Int      @id @default(autoincrement())
+  periodeId Int      @map("periode_id")
+  nama      String   @db.VarChar(100)
+  jabatan   String   @db.VarChar(100)
+  deskripsi String?  @db.Text
+  foto      String?  @db.VarChar(500)
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  periode PeriodeKepengurusan @relation(fields: [periodeId], references: [id])
+
+  @@index([periodeId], name: "idx_pembina_periode")
+  @@map("pembina")
+}
+
+model Pengurus {
+  id           Int      @id @default(autoincrement())
+  periodeId    Int      @map("periode_id")
+  nama         String   @db.VarChar(100)
+  jabatan      String   @db.VarChar(100)
+  kategori     String   @db.VarChar(50)
+  racana       String?  @db.VarChar(20)
+  programStudi String?  @map("program_studi") @db.VarChar(100)
+  angkatan     String?  @db.VarChar(10)
+  tingkatan    String?  @db.VarChar(50)
+  kutipan      String?  @db.Text
+  deskripsi    String?  @db.Text
+  foto         String?  @db.VarChar(500)
+  urutan       Int      @default(0)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  periode PeriodeKepengurusan @relation(fields: [periodeId], references: [id])
+
+  @@index([periodeId], name: "idx_pengurus_periode")
+  @@index([kategori], name: "idx_pengurus_kategori")
+  @@map("pengurus")
+}
+
+model Divisi {
+  id              Int      @id @default(autoincrement())
+  periodeId       Int      @map("periode_id")
+  namaDivisi      String   @map("nama_divisi") @db.VarChar(100)
+  bidang          String?  @db.VarChar(200)
+  koordinatorNama String   @map("koordinator_nama") @db.VarChar(100)
+  email           String?  @db.VarChar(100)
+  deskripsi       String?  @db.Text
+  urutan          Int      @default(0)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+
+  periode    PeriodeKepengurusan @relation(fields: [periodeId], references: [id])
+  anggota    AnggotaDivisi[]
+  fokusTugas FokusTugasDivisi[]
+
+  @@index([periodeId], name: "idx_divisi_periode")
+  @@map("divisi")
+}
+
+model AnggotaDivisi {
+  id       Int    @id @default(autoincrement())
+  divisiId Int    @map("divisi_id")
+  nama     String @db.VarChar(100)
+  urutan   Int    @default(0)
+
+  divisi Divisi @relation(fields: [divisiId], references: [id], onDelete: Cascade)
+
+  @@index([divisiId], name: "idx_anggota_divisi")
+  @@map("anggota_divisi")
+}
+
+model FokusTugasDivisi {
+  id       Int    @id @default(autoincrement())
+  divisiId Int    @map("divisi_id")
+  tugas    String @db.VarChar(255)
+  urutan   Int    @default(0)
+
+  divisi Divisi @relation(fields: [divisiId], references: [id], onDelete: Cascade)
+
+  @@index([divisiId], name: "idx_fokus_tugas_divisi")
+  @@map("fokus_tugas_divisi")
+}
+
+model Pendaftaran {
+  id           Int      @id @default(autoincrement())
+  namaLengkap  String   @map("nama_lengkap") @db.VarChar(100)
+  nim          String   @db.VarChar(20)
+  programStudi String   @map("program_studi") @db.VarChar(100)
+  angkatan     String   @db.VarChar(10)
+  jenisKelamin String   @map("jenis_kelamin") @db.VarChar(10)
+  nomorTelepon String   @map("nomor_telepon") @db.VarChar(20)
+  email        String   @db.VarChar(100)
+  motivasi     String?  @db.Text
+  status       String   @default("baru") @db.VarChar(20)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([status], name: "idx_pendaftaran_status")
+  @@index([createdAt(sort: Desc)], name: "idx_pendaftaran_created")
+  @@map("pendaftaran")
+}
