@@ -91,8 +91,14 @@
   let isSubmittingNews = $state(false);
 
   onMount(async () => {
-    // Check authentication
+    // Check authentication & connect to Portal Admin
     if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('admin_token');
+      if (!token) {
+        goto('/admin/login');
+        return;
+      }
+
       const storedUser = localStorage.getItem('admin_user');
       if (storedUser) {
         try {
@@ -109,9 +115,12 @@
 
   async function loadDashboardData() {
     try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+      const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+
       const [resStats, resPendaftar] = await Promise.all([
-        fetch('http://localhost:3000/api/pendaftaran/stats'),
-        fetch('http://localhost:3000/api/pendaftaran?limit=10'),
+        fetch('http://localhost:3000/api/pendaftaran/stats', { headers }),
+        fetch('http://localhost:3000/api/pendaftaran?limit=10', { headers }),
       ]);
 
       if (resStats.ok) {
@@ -134,9 +143,13 @@
 
   async function verifyPendaftar(id: number) {
     try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
       await fetch(`http://localhost:3000/api/pendaftaran/${id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ status: 'terverifikasi' }),
       });
     } catch (e) {
@@ -273,13 +286,13 @@
       </div>
     </div>
 
-    <!-- Portal Admin Badge / Dropdown -->
+    <!-- Portal Admin Badge / Link ke Portal Admin -->
     <div class="portal-badge-wrap">
-      <div class="portal-admin-pill">
+      <a href="/admin/login" class="portal-admin-pill" title="Kunjungi Portal Admin Login">
         <span class="pill-dot"></span>
         <span class="pill-text">Portal Admin</span>
-        <span class="pill-arrow">▾</span>
-      </div>
+        <span class="pill-arrow">→</span>
+      </a>
     </div>
 
     <!-- Navigation Menu -->
@@ -428,6 +441,12 @@
                 <span class="user-unit">Racana Dewa Raja – Batari</span>
               </div>
               <hr class="menu-divider" />
+              <a href="/admin/login" class="menu-item" onclick={() => (showProfileDropdown = false)}>
+                <svg viewBox="0 0 24 24" class="menu-item-icon" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                </svg>
+                <span>Portal Login Admin</span>
+              </a>
               <button type="button" class="menu-item text-danger" onclick={handleLogout}>
                 <svg viewBox="0 0 24 24" class="menu-item-icon" fill="currentColor">
                   <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
@@ -856,44 +875,6 @@
               </button>
             </div>
           </div>
-
-          <!-- CARD D: CATATAN SANGGAR -->
-          <div class="content-card notes-card">
-            <div class="notes-header">
-              <svg viewBox="0 0 24 24" class="notes-icon" fill="currentColor">
-                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
-              </svg>
-              <h2 class="card-main-title">Catatan Sanggar</h2>
-            </div>
-
-            <div class="notes-box">
-              <div class="note-meta-row">
-                <span class="note-author">Sekretariat</span>
-                <span class="note-bullet">•</span>
-                <span class="note-date">10 Apr 2025</span>
-              </div>
-              <p class="note-body">
-                Seluruh berkas fisik calon peserta PAB gelombang 1 wajib
-                diserahkan ke Sanggar Bakti paling lambat Kamis pukul 17:00 WITA
-                untuk penomoran dada.
-              </p>
-            </div>
-
-            <!-- SIAKAD Integration Pill -->
-            <div class="siakad-pill">
-              <span class="siakad-dot"></span>
-              <span class="siakad-label">SIAKAD Polidewa</span>
-              <span class="siakad-status">Terhubung & Sinkron</span>
-              <span class="siakad-ver">v2.4</span>
-            </div>
-
-            <!-- Scouting Motto Footer -->
-            <div class="scout-motto-box">
-              <p class="motto-text">
-                &ldquo;Satyaku Kudharmakan, Dharmaku Kubaktikan&rdquo;
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </main>
@@ -1153,7 +1134,14 @@
     font-size: 0.82rem;
     font-weight: 800;
     cursor: pointer;
+    text-decoration: none;
     box-shadow: 0 4px 14px rgba(254, 187, 43, 0.35);
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+
+  .portal-admin-pill:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
   }
 
   .pill-dot {
@@ -1506,8 +1494,14 @@
     border-radius: 8px;
     font-size: 0.82rem;
     font-weight: 600;
+    color: #ffffff;
+    text-decoration: none;
     cursor: pointer;
     transition: background 0.15s ease;
+  }
+
+  .menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .menu-item.text-danger {
@@ -2205,92 +2199,6 @@
     font-weight: 700;
   }
 
-  /* Catatan Sanggar */
-  .notes-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1.15rem;
-    color: #febb2b;
-  }
-
-  .notes-icon {
-    width: 18px;
-    height: 18px;
-  }
-
-  .notes-box {
-    background: rgba(0, 0, 0, 0.22);
-    border-left: 3px solid #febb2b;
-    border-radius: 10px;
-    padding: 0.95rem 1rem;
-    margin-bottom: 1.15rem;
-  }
-
-  .note-meta-row {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.72rem;
-    color: #febb2b;
-    font-weight: 700;
-    margin-bottom: 0.45rem;
-  }
-
-  .note-body {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.82);
-    line-height: 1.5;
-  }
-
-  .siakad-pill {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    background: rgba(16, 185, 129, 0.12);
-    border: 1px solid rgba(16, 185, 129, 0.35);
-    border-radius: 10px;
-    padding: 0.55rem 0.85rem;
-    font-size: 0.75rem;
-    margin-bottom: 1rem;
-  }
-
-  .siakad-dot {
-    width: 6px;
-    height: 6px;
-    background: #10b981;
-    border-radius: 50%;
-    box-shadow: 0 0 6px #10b981;
-  }
-
-  .siakad-label {
-    font-weight: 800;
-    color: #ffffff;
-  }
-
-  .siakad-status {
-    color: #a7f3d0;
-  }
-
-  .siakad-ver {
-    margin-left: auto;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.7rem;
-  }
-
-  .scout-motto-box {
-    text-align: center;
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .motto-text {
-    font-size: 0.82rem;
-    font-style: italic;
-    font-weight: 700;
-    color: #febb2b;
-    letter-spacing: 0.01em;
-  }
 
   /* -------------------------------------------------------------
      MODALS

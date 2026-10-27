@@ -7,21 +7,6 @@
         alt="Kolase Anggota dan Pengurus Racana Dewa Raja – Batari Pramuka Politeknik Dewantara"
         class="collage-img"
       />
-
-      <!-- Decorative Pine Tree / Scouting Ornament at Bottom Right -->
-      <div class="collage-tree-ornament" aria-hidden="true">
-        <svg viewBox="0 0 80 100" fill="none" class="tree-svg">
-          <!-- Trunk -->
-          <rect x="35" y="65" width="10" height="35" fill="#febb2b" />
-          <rect x="35" y="0" width="10" height="20" fill="#febb2b" />
-          <!-- Layer 1 (Top) -->
-          <path d="M40 10 C25 22 15 32 15 35 C25 29 35 27 40 27 C45 27 55 29 65 35 C65 32 55 22 40 10 Z" fill="#febb2b"/>
-          <!-- Layer 2 (Middle) -->
-          <path d="M40 30 C25 42 15 52 15 55 C25 49 35 47 40 47 C45 47 55 49 65 55 C65 52 55 42 40 30 Z" fill="#febb2b"/>
-          <!-- Layer 3 (Bottom) -->
-          <path d="M40 50 C25 62 15 72 15 75 C25 69 35 67 40 67 C45 67 55 69 65 75 C65 72 55 62 40 50 Z" fill="#febb2b"/>
-        </svg>
-      </div>
     </div>
 
     <!-- Interactive Profile CTA Button with clear distance from image -->
@@ -105,22 +90,6 @@
     flex-shrink: 0;
   }
 
-  /* Tree ornament at bottom right */
-  .collage-tree-ornament {
-    position: absolute;
-    right: 1.5%;
-    bottom: 0;
-    width: 72px;
-    height: 90px;
-    pointer-events: none;
-    z-index: 5;
-  }
-
-  .tree-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
 
   @media (max-width: 900px) {
     .collage-btn-wrapper {
@@ -132,10 +101,6 @@
       font-size: 0.82rem;
     }
 
-    .collage-tree-ornament {
-      width: 50px;
-      height: 65px;
-    }
   }
 
   @media (max-width: 600px) {
@@ -152,8 +117,5 @@
       font-size: 0.8rem;
     }
 
-    .collage-tree-ornament {
-      display: none;
-    }
   }
 </style>

@@ -66,7 +66,8 @@
 
   .cta-content-box {
     text-align: center;
-    max-width: 740px;
+    max-width: 1060px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -75,11 +76,12 @@
   }
 
   .cta-main-title {
-    font-size: 2.25rem;
+    font-size: clamp(1.35rem, 2.25vw, 2.2rem);
     font-weight: 900;
     color: var(--color-purple-dark);
     line-height: 1.25;
     letter-spacing: -0.015em;
+    white-space: nowrap;
   }
 
   .cta-desc-text {
@@ -145,7 +147,9 @@
 
   @media (max-width: 768px) {
     .cta-main-title {
-      font-size: 1.75rem;
+      font-size: clamp(1.2rem, 4.5vw, 1.65rem);
+      white-space: normal;
+      text-wrap: balance;
     }
 
     .cta-decor-icons {
