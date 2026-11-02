@@ -21,11 +21,13 @@
   let errorMessage = $state('');
 
   const prodiList = [
-    'Teknologi Informasi (D4/S1 Terapan)',
-    'Teknik Rekayasa Mesin',
-    'Akuntansi Komputer',
-    'Administrasi Bisnis Terapan',
-    'Teknologi Rekayasa Konstruksi Gedung',
+    'Teknologi Rekayasa Multimedia',
+    'Teknik Sipil',
+    'Mesin Otomotif',
+    'Teknik Elektronika',
+    'Teknologi Rekayasa Pangan',
+    'Arsitektur Bangunan Gedung',
+    'Teknologi Pertambangan ( Metalurgi )',
   ];
 
   async function handleSubmit(e: Event) {
@@ -239,13 +241,13 @@
               <!-- Email -->
               <div class="form-group">
                 <label for="email" class="form-label">
-                  Alamat Email Kampus / Pribadi <span class="required">*</span>
+                  Alamat Email Pribadi <span class="required">*</span>
                 </label>
                 <input
                   type="email"
                   id="email"
                   required
-                  placeholder="nama@polidewa.ac.id"
+                  placeholder="nama@gmail.com"
                   bind:value={formData.email}
                   class="form-input"
                 />

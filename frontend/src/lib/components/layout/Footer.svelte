@@ -6,10 +6,15 @@
         <h3 class="footer-brand-title">Pramuka Politeknik Dewantara</h3>
         <p class="footer-brand-sub">Racana Dewa Raja – Batari</p>
         <p class="footer-brand-text">
-          Wadah pembinaan kepemimpinan mahasiswa dalam gerakan pramuka di tingkat perguruan tinggi, membangun karakter kepemimpinan, kemandirian dan semangat persaudaraan berdasarkan Tri Satya dan Dasa Dharma.
+          Wadah pembinaan kepemimpinan mahasiswa dalam gerakan pramuka di
+          tingkat perguruan tinggi, membangun karakter kepemimpinan, kemandirian
+          dan semangat persaudaraan berdasarkan Tri Satya dan Dasa Dharma.
         </p>
         <div class="footer-badge-wrap">
-          <span class="footer-pill-btn">Politeknik Dewantara Palopo</span>
+          <span class="footer-pill-btn"
+            >Dari Adat Kami berpijak, Dengan Satya Kami Melangkah, Melalui Darma
+            Kami mengabdi.</span
+          >
         </div>
       </div>
 
@@ -30,17 +35,22 @@
         <h4 class="col-title">Pangkalan &amp; Lokasi</h4>
         <div class="location-item">
           <svg viewBox="0 0 24 24" class="loc-icon" fill="currentColor">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            <path
+              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+            />
           </svg>
           <span class="loc-text">
-            Kampus Politeknik Dewantara, Jl. K.H. Ahmad Razak Lorong 2 No. 7 Bina Satria, Wara, Kota Palopo, Sulawesi Selatan
+            Kampus Politeknik Dewantara, Jl. K.H. Ahmad Razak Lorong 2 No. 7
+            Bina Satria, Wara, Kota Palopo, Sulawesi Selatan
           </span>
         </div>
         <div class="location-item date-item">
           <svg viewBox="0 0 24 24" class="loc-icon" fill="currentColor">
-            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM5 8V6h14v2H5z"/>
+            <path
+              d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM5 8V6h14v2H5z"
+            />
           </svg>
-          <span class="loc-text">Berdiri : 17 Mei 2023</span>
+          <span class="loc-text">Berdiri : 9 Mei 2025</span>
         </div>
       </div>
 
@@ -56,10 +66,18 @@
             class="social-circle-btn"
             aria-label="Instagram Pramuka Polidewa"
           >
-            <svg viewBox="0 0 24 24" class="social-svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            <svg
+              viewBox="0 0 24 24"
+              class="social-svg"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
             </svg>
           </a>
 
@@ -72,7 +90,9 @@
             aria-label="TikTok Pramuka Polidewa"
           >
             <svg viewBox="0 0 24 24" class="social-svg" fill="currentColor">
-              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.29 0 .58.04.86.12V9.32a6.38 6.38 0 0 0-.86-.06A6.33 6.33 0 0 0 3.12 15.6a6.34 6.34 0 0 0 10.82 4.48c.36-.36.68-.76.94-1.2V9.92a8.28 8.28 0 0 0 4.71 1.48v-3.46a4.84 4.84 0 0 1-.001-1.25z"/>
+              <path
+                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.29 0 .58.04.86.12V9.32a6.38 6.38 0 0 0-.86-.06A6.33 6.33 0 0 0 3.12 15.6a6.34 6.34 0 0 0 10.82 4.48c.36-.36.68-.76.94-1.2V9.92a8.28 8.28 0 0 0 4.71 1.48v-3.46a4.84 4.84 0 0 1-.001-1.25z"
+              />
             </svg>
           </a>
         </div>
@@ -82,12 +102,15 @@
     <!-- Bottom Copyright Row -->
     <div class="footer-bottom-row">
       <p class="copy-text">
-        &copy; 2025 &ndash; 2026 Pramuka Politeknik Dewantara &ndash; Racana Dewa Raja &ndash; Batari. Seluruh hak cipta dilindungi.
+        &copy; 2025 &ndash; 2026 Pramuka Politeknik Dewantara &ndash; Racana
+        Dewa Raja &ndash; Batari. Seluruh hak cipta dilindungi.
       </p>
       <div class="footer-bottom-links">
         <span class="campus-text">Politeknik Dewantara Palopo</span>
         <span class="dot-sep">•</span>
-        <a href="/admin/login" class="link-admin-portal">Portal Pengurus (Admin)</a>
+        <a href="/admin/login" class="link-admin-portal"
+          >Portal Pengurus (Admin)</a
+        >
       </div>
     </div>
   </div>
@@ -98,7 +121,7 @@
     background-color: var(--color-yellow-gold);
     color: var(--color-purple-dark);
     padding: 3.5rem 0 1.75rem;
-    border-top: 1px solid rgba(42, 18, 69, 0.15);
+    border-top: none;
   }
 
   .footer-grid {
@@ -146,8 +169,9 @@
     color: #ffffff;
     font-size: 0.72rem;
     font-weight: 700;
-    padding: 0.35rem 0.9rem;
-    border-radius: var(--radius-full);
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    line-height: 1.45;
   }
 
   .col-title {
@@ -168,7 +192,9 @@
     font-size: 0.84rem;
     font-weight: 600;
     color: rgba(42, 18, 69, 0.9);
-    transition: color 0.15s ease, transform 0.15s ease;
+    transition:
+      color 0.15s ease,
+      transform 0.15s ease;
     display: inline-block;
   }
 

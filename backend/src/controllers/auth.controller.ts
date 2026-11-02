@@ -50,3 +50,39 @@ export const loginAdmin = async (req: Request, res: Response, next: NextFunction
     return next(error);
   }
 };
+
+export const getMe = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const adminId = (req as any).user?.id;
+    if (!adminId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Akses ditolak. Token tidak valid.',
+      });
+    }
+
+    const admin = await prisma.admin.findUnique({
+      where: { id: adminId },
+      select: {
+        id: true,
+        username: true,
+        namaLengkap: true,
+        createdAt: true,
+      },
+    });
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: 'Admin tidak ditemukan.',
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: { admin },
+    });
+  } catch (error) {
+    return next(error);
+  }
+};

@@ -1,15 +1,69 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+  import { page } from '$app/state';
   import Breadcrumb from '#lib/components/ui/Breadcrumb.svelte';
 
-  const breadcrumbs = [
+  let currentSlug = $derived(page.params.slug);
+  let artikel = $state<any>(null);
+  let relatedBerita = $state<any[]>([]);
+  let isLoading = $state(true);
+
+  onMount(async () => {
+    try {
+      const [resDetail, resList] = await Promise.all([
+        fetch(`http://localhost:3000/api/berita/${currentSlug}`),
+        fetch('http://localhost:3000/api/berita?limit=6'),
+      ]);
+
+      if (resDetail.ok) {
+        const json = await resDetail.json();
+        if (json.success && json.data) {
+          artikel = json.data;
+        }
+      }
+
+      if (resList.ok) {
+        const jsonList = await resList.json();
+        if (jsonList.success && Array.isArray(jsonList.data)) {
+          relatedBerita = jsonList.data.filter((b: any) => b.slug !== currentSlug);
+        }
+      }
+    } catch (e) {
+      console.warn('Gagal memuat detail artikel:', e);
+    } finally {
+      isLoading = false;
+    }
+  });
+
+  let displayTitle = $derived(artikel?.judul || 'Penerimaan Anggota Baru Racana Dewa Raja – Batari Tahun 2026/2027 Resmi Dibuka');
+  let displayCategory = $derived(artikel?.kategori || 'Pengumuman Resmi & Penerimaan Anggota');
+  let displayPhoto = $derived(artikel?.gambarUtama || '/images/berita/hero-lkpm-photo.jpg');
+  let displayCaption = $derived(artikel?.captionGambar || `Dokumentasi: ${displayTitle}`);
+  let displayAuthor = $derived(artikel?.penulis || 'Admin Racana');
+  let displayDate = $derived(
+    artikel?.tanggalPublish
+      ? new Date(artikel.tanggalPublish).toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })
+      : '20 Oktober 2026'
+  );
+  let contentParagraphs = $derived.by(() => {
+    if (!artikel || (!artikel.konten && !artikel.ringkasan)) return null;
+    const text = artikel.konten || artikel.ringkasan || '';
+    return text.split('\n').map((p: string) => p.trim()).filter((p: string) => p.length > 0);
+  });
+
+  let breadcrumbs = $derived([
     { label: 'Berita', href: '/berita' },
-    { label: 'Penerimaan Anggota Baru 2026/2027' },
-  ];
+    { label: displayTitle },
+  ]);
 </script>
 
 <svelte:head>
-  <title>Penerimaan Anggota Baru Racana Dewa Raja – Batari 2026/2027 — Pramuka Polidewa</title>
-  <meta name="description" content="Pengumuman resmi pembukaan pendaftaran calon anggota baru Racana Dewa Raja – Batari Politeknik Dewantara Palopo." />
+  <title>{displayTitle} — Pramuka Polidewa</title>
+  <meta name="description" content={`Warta kegiatan resmi Pramuka Polidewa: ${displayTitle}`} />
 </svelte:head>
 
 <div class="page-detail-berita">
@@ -19,15 +73,15 @@
     <!-- Article Header -->
     <header class="article-header">
       <div class="badge-pill">
-        📢 Pengumuman Resmi &amp; Penerimaan Anggota
+        📢 {displayCategory}
       </div>
       <h1 class="article-title">
-        Penerimaan Anggota Baru Racana Dewa Raja &ndash; Batari Tahun 2026/2027 Resmi Dibuka
+        {displayTitle}
       </h1>
       <div class="article-meta-bar">
-        <span>Ditulis oleh <strong>Admin Racana</strong></span>
+        <span>Ditulis oleh <strong>{displayAuthor}</strong></span>
         <span>&bull;</span>
-        <span>20 Oktober 2026</span>
+        <span>{displayDate}</span>
         <span>&bull;</span>
         <span class="read-time">5 Menit Membaca</span>
       </div>
@@ -37,14 +91,14 @@
     <figure class="article-figure">
       <div class="figure-img-frame">
         <img
-          src="/images/Berita pramuka Polidewa.png"
-          alt="Dokumentasi Latihan Kepemimpinan Mahasiswa LKPM"
+          src={displayPhoto}
+          alt={displayCaption}
           class="feature-image"
         />
       </div>
       <figcaption class="figure-caption-bar">
         <span class="caption-text">
-          📷 Dokumentasi Latihan Kepemimpinan Mahasiswa (LKPM) Pengurus 2026/2027
+          📷 {displayCaption}
         </span>
         <span class="caption-gudep">
           GUDEP 04.017 &ndash; 04.018
@@ -55,25 +109,35 @@
     <!-- Article Content -->
     <main class="article-body-wrapper">
       <article class="article-content-card">
-        <p class="dropcap-lead">
-          Pramuka Politeknik Dewantara Palopo dengan bangga mengumumkan dibukanya masa penerimaan calon anggota baru Racana Dewa Raja &ndash; Batari untuk masa bakti 2026/2027. Kesempatan ini terbuka luas bagi seluruh mahasiswa aktif Politeknik Dewantara Palopo dari seluruh program studi yang memiliki tekad untuk menempa jiwa kepemimpinan, kedisiplinan, serta mengabdi kepada masyarakat.
-        </p>
+        {#if contentParagraphs && contentParagraphs.length > 0}
+          {#each contentParagraphs as p, idx}
+            {#if idx === 0}
+              <p class="dropcap-lead">{p}</p>
+            {:else}
+              <p>{p}</p>
+            {/if}
+          {/each}
+        {:else}
+          <p class="dropcap-lead">
+            Pramuka Politeknik Dewantara Palopo dengan bangga mengumumkan dibukanya masa penerimaan calon anggota baru Racana Dewa Raja &ndash; Batari untuk masa bakti 2026/2027. Kesempatan ini terbuka luas bagi seluruh mahasiswa aktif Politeknik Dewantara Palopo dari seluruh program studi yang memiliki tekad untuk menempa jiwa kepemimpinan, kedisiplinan, serta mengabdi kepada masyarakat.
+          </p>
 
-        <p>
-          Racana Dewa Raja (Satuan Putra) dan Racana Batari (Satuan Putri) merupakan ruang aktualisasi diri tingkat Pandega di perguruan tinggi yang menggabungkan kecakapan navigasi alam bebas, manajemen organisasi, hingga pengabdian sosial berbasis Dasa Darma dan Trisatya.
-        </p>
+          <p>
+            Racana Dewa Raja (Satuan Putra) dan Racana Batari (Satuan Putri) merupakan ruang aktualisasi diri tingkat Pandega di perguruan tinggi yang menggabungkan kecakapan navigasi alam bebas, manajemen organisasi, hingga pengabdian sosial berbasis Dasa Darma dan Trisatya.
+          </p>
 
-        <h2 class="sub-heading">Jadwal dan Persyaratan Pendaftaran</h2>
-        <p>
-          Proses penerimaan anggota baru akan dilaksanakan dalam beberapa tahapan seleksi berkas, wawancara minat bakat, serta masa orientasi pengenalan adat racana (Kembara Adat):
-        </p>
+          <h2 class="sub-heading">Jadwal dan Persyaratan Pendaftaran</h2>
+          <p>
+            Proses penerimaan anggota baru akan dilaksanakan dalam beberapa tahapan seleksi berkas, wawancara minat bakat, serta masa orientasi pengenalan adat racana (Kembara Adat):
+          </p>
 
-        <ul class="article-list">
-          <li><strong>Pendaftaran Online:</strong> 20 Oktober &ndash; 15 November 2026</li>
-          <li><strong>Verifikasi Berkas &amp; Administrasi:</strong> 16 &ndash; 18 November 2026</li>
-          <li><strong>Wawancara &amp; Temu Ramah:</strong> 20 November 2026</li>
-          <li><strong>Prapendidikan &amp; Orientasi Ruang:</strong> 25 &ndash; 27 November 2026</li>
-        </ul>
+          <ul class="article-list">
+            <li><strong>Pendaftaran Online:</strong> 20 Oktober &ndash; 15 November 2026</li>
+            <li><strong>Verifikasi Berkas &amp; Administrasi:</strong> 16 &ndash; 18 November 2026</li>
+            <li><strong>Wawancara &amp; Temu Ramah:</strong> 20 November 2026</li>
+            <li><strong>Prapendidikan &amp; Orientasi Ruang:</strong> 25 &ndash; 27 November 2026</li>
+          </ul>
+        {/if}
 
         <div class="inline-cta-box">
           <h3>Ingin Bergabung Bersama Kami?</h3>
@@ -91,20 +155,41 @@
           <h3 class="sidebar-title">Berita &amp; Agenda Lainnya</h3>
         </div>
 
-        <div class="related-card">
-          <img
-            src="/images/Beranda Pramuka Polidewa (Desktop).png"
-            alt="Seminar Se-Kota Palopo"
-            class="related-thumb"
-          />
-          <div class="related-body">
-            <span class="related-tag">SEMINAR SE-KOTA PALOPO</span>
-            <h4 class="related-title">
-              <a href="/berita">Seminar Pramuka Penegak &amp; Pandega Se-Kota Palopo Tahun 2025</a>
-            </h4>
-            <span class="related-date">12 Mei 2025</span>
+        {#if relatedBerita && relatedBerita.length > 0}
+          {#each relatedBerita.slice(0, 3) as rel}
+            <div class="related-card">
+              <img
+                src={rel.gambarUtama || '/images/berita/hero-lkpm-photo.jpg'}
+                alt={rel.judul}
+                class="related-thumb"
+              />
+              <div class="related-body">
+                <span class="related-tag">{rel.kategori || 'KEGIATAN RACANA'}</span>
+                <h4 class="related-title">
+                  <a href={`/berita/${rel.slug}`}>{rel.judul}</a>
+                </h4>
+                <span class="related-date">
+                  {rel.tanggalPublish ? new Date(rel.tanggalPublish).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '2026'}
+                </span>
+              </div>
+            </div>
+          {/each}
+        {:else}
+          <div class="related-card">
+            <img
+              src="/images/Beranda Pramuka Polidewa (Desktop).png"
+              alt="Seminar Se-Kota Palopo"
+              class="related-thumb"
+            />
+            <div class="related-body">
+              <span class="related-tag">SEMINAR SE-KOTA PALOPO</span>
+              <h4 class="related-title">
+                <a href="/berita">Seminar Pramuka Penegak &amp; Pandega Se-Kota Palopo Tahun 2025</a>
+              </h4>
+              <span class="related-date">12 Mei 2025</span>
+            </div>
           </div>
-        </div>
+        {/if}
 
         <a href="/berita" class="btn-all-news">
           Lihat Semua Berita &rarr;

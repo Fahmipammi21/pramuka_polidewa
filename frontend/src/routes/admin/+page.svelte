@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import BeritaCrudManager from '#lib/components/admin/BeritaCrudManager.svelte';
 
   interface AdminUser {
     id: number;
@@ -29,6 +30,8 @@
   }
 
   // Reactive state
+  let currentSection = $state<'dashboard' | 'berita'>('dashboard');
+
   let adminUser = $state<AdminUser>({
     id: 1,
     username: 'admin',
@@ -176,9 +179,13 @@
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)+/g, '');
 
+      const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
       await fetch('http://localhost:3000/api/berita', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           judul: newsTitle,
           slug,
@@ -297,21 +304,39 @@
 
     <!-- Navigation Menu -->
     <nav class="sidebar-nav">
-      <a href="/admin" class="nav-item active">
+      <button
+        type="button"
+        class="nav-item-btn"
+        class:active={currentSection === 'dashboard' && activeTab !== 'baru'}
+        onclick={() => { currentSection = 'dashboard'; activeTab = 'semua'; isMobileSidebarOpen = false; }}
+      >
         <svg viewBox="0 0 24 24" class="nav-icon" fill="currentColor">
           <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
         </svg>
-        <span>Dashboard</span>
-      </a>
+        <span>Dashboard Utama</span>
+      </button>
 
-      <a href="/admin" class="nav-item">
+      <button
+        type="button"
+        class="nav-item-btn"
+        class:active={currentSection === 'berita'}
+        onclick={() => { currentSection = 'berita'; isMobileSidebarOpen = false; }}
+      >
         <svg viewBox="0 0 24 24" class="nav-icon" fill="currentColor">
-          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/>
         </svg>
-        <span>Manajemen Anggota</span>
-      </a>
+        <div class="nav-label-wrap">
+          <span>CRUD Berita &amp; Kegiatan</span>
+          <span class="badge-baru">Aktif</span>
+        </div>
+      </button>
 
-      <a href="/admin" class="nav-item" onclick={() => (activeTab = 'baru')}>
+      <button
+        type="button"
+        class="nav-item-btn"
+        class:active={currentSection === 'dashboard' && activeTab === 'baru'}
+        onclick={() => { currentSection = 'dashboard'; activeTab = 'baru'; isMobileSidebarOpen = false; }}
+      >
         <svg viewBox="0 0 24 24" class="nav-icon" fill="currentColor">
           <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
         </svg>
@@ -319,28 +344,29 @@
           <span>Pendaftaran Masuk (PAB)</span>
           <span class="badge-baru">Baru</span>
         </div>
-      </a>
+      </button>
 
-      <a href="/admin" class="nav-item">
+      <button
+        type="button"
+        class="nav-item-btn"
+        onclick={() => { currentSection = 'dashboard'; isMobileSidebarOpen = false; }}
+      >
         <svg viewBox="0 0 24 24" class="nav-icon" fill="currentColor">
-          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/>
+          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
         </svg>
-        <span>Berita & Kegiatan</span>
-      </a>
+        <span>Manajemen Anggota</span>
+      </button>
 
-      <a href="/admin" class="nav-item">
+      <button
+        type="button"
+        class="nav-item-btn"
+        onclick={() => { currentSection = 'dashboard'; isMobileSidebarOpen = false; }}
+      >
         <svg viewBox="0 0 24 24" class="nav-icon" fill="currentColor">
           <path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/>
         </svg>
-        <span>Inventaris & Sarpras</span>
-      </a>
-
-      <a href="/admin" class="nav-item">
-        <svg viewBox="0 0 24 24" class="nav-icon" fill="currentColor">
-          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
-        </svg>
-        <span>Pengaturan Web</span>
-      </a>
+        <span>Inventaris &amp; Sarpras</span>
+      </button>
     </nav>
 
     <!-- Sidebar Footer -->
@@ -375,7 +401,7 @@
         <div class="nav-breadcrumbs">
           <span class="bc-parent">Sistem Racana</span>
           <span class="bc-sep">›</span>
-          <span class="bc-active">Pusat Komando</span>
+          <span class="bc-active">{currentSection === 'berita' ? 'CRUD Berita & Kegiatan' : 'Pusat Komando'}</span>
         </div>
       </div>
 
@@ -408,8 +434,9 @@
         <button
           type="button"
           class="icon-circle-btn"
-          onclick={() => (showAddNewsModal = true)}
+          onclick={() => (currentSection = 'berita')}
           aria-label="Tambah Konten"
+          title="Buka CRUD Berita &amp; Kegiatan"
         >
           <svg viewBox="0 0 24 24" class="icon-svg" fill="currentColor">
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
@@ -499,18 +526,18 @@
               <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
             </svg>
             <span>Lihat Pendaftar PAB</span>
-            <span class="btn-pill-count">{stats.pab.pending || 12}</span>
+            <span class="btn-pill-count">{stats.pab.pending ?? 0}</span>
           </button>
 
           <button
             type="button"
             class="btn-banner-gold-outline"
-            onclick={() => (showAddNewsModal = true)}
+            onclick={() => (currentSection = 'berita')}
           >
             <svg viewBox="0 0 24 24" class="btn-ic" fill="currentColor">
               <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
             </svg>
-            <span>+ Tambah Berita Baru</span>
+            <span>+ Kelola CRUD Berita</span>
           </button>
         </div>
       </section>
@@ -518,7 +545,7 @@
       <!-- 2. FOUR STAT CARDS ROW -->
       <section class="stats-grid">
         <!-- Stat 1: Pendaftar PAB -->
-        <div class="stat-card">
+        <div class="stat-card clickable-card" onclick={() => { currentSection = 'dashboard'; activeTab = 'baru'; }}>
           <div class="stat-header">
             <span class="stat-label">Pendaftar PAB 2025</span>
             <div class="stat-icon-wrap bg-purple-tint">
@@ -528,12 +555,12 @@
             </div>
           </div>
           <div class="stat-number-row">
-            <span class="stat-num">{stats.pab.total || 68}</span>
+            <span class="stat-num">{stats.pab.total ?? 0}</span>
             <span class="stat-unit">Calon</span>
           </div>
           <div class="stat-footer">
             <span class="footer-dot-yellow"></span>
-            <span class="footer-text">{stats.pab.pending || 12} perlu verifikasi</span>
+            <span class="footer-text">{stats.pab.pending ?? 0} perlu verifikasi</span>
           </div>
         </div>
 
@@ -548,20 +575,20 @@
             </div>
           </div>
           <div class="stat-number-row">
-            <span class="stat-num">{stats.anggotaAktif.total || 48}</span>
+            <span class="stat-num">{stats.anggotaAktif.total ?? 0}</span>
             <span class="stat-unit">Pandega</span>
           </div>
           <div class="stat-footer">
             <span class="footer-text">
-              {stats.anggotaAktif.putra || 26} Putra • {stats.anggotaAktif.putri || 22} Putri
+              {stats.anggotaAktif.putra ?? 0} Putra • {stats.anggotaAktif.putri ?? 0} Putri
             </span>
           </div>
         </div>
 
         <!-- Stat 3: Warta & Berita -->
-        <div class="stat-card">
+        <div class="stat-card clickable-card" onclick={() => (currentSection = 'berita')}>
           <div class="stat-header">
-            <span class="stat-label">Warta & Berita</span>
+            <span class="stat-label">Warta &amp; Berita (CRUD)</span>
             <div class="stat-icon-wrap bg-gold-tint">
               <svg viewBox="0 0 24 24" class="stat-svg text-gold" fill="currentColor">
                 <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/>
@@ -569,12 +596,12 @@
             </div>
           </div>
           <div class="stat-number-row">
-            <span class="stat-num">{stats.wartaBerita.total || 24}</span>
+            <span class="stat-num">{stats.wartaBerita.total ?? 0}</span>
             <span class="stat-unit">Terbit</span>
           </div>
           <div class="stat-footer">
             <span class="footer-text">
-              {stats.wartaBerita.draft || 2} draf artikel menunggu tayang
+              Klik untuk buka CRUD Berita &rarr;
             </span>
           </div>
         </div>
@@ -590,19 +617,23 @@
             </div>
           </div>
           <div class="stat-number-row">
-            <span class="stat-num">{stats.inventaris.total || 142}</span>
+            <span class="stat-num">{stats.inventaris.total ?? 0}</span>
             <span class="stat-unit">Aset</span>
           </div>
           <div class="stat-footer">
             <span class="footer-text">
-              {stats.inventaris.siapPakaiPercent || 98}% kondisi prima & siap pakai
+              {stats.inventaris.siapPakaiPercent ?? 0}% kondisi prima &amp; siap pakai
             </span>
           </div>
         </div>
       </section>
 
-      <!-- 3. LOWER TWO-COLUMN LAYOUT -->
-      <div class="lower-grid">
+      {#if currentSection === 'berita'}
+        <!-- DEDICATED CRUD KHUSUS BERITA & KEGIATAN -->
+        <BeritaCrudManager />
+      {:else}
+        <!-- 3. LOWER TWO-COLUMN LAYOUT -->
+        <div class="lower-grid">
         <!-- LEFT COLUMN (65%) -->
         <div class="left-col">
           <!-- CARD A: PENDAFTAR PAB TERBARU -->
@@ -643,7 +674,7 @@
                 </div>
 
                 <a href="/admin" class="link-open-all">
-                  <span>Buka Semua ({stats.pab.total || 68})</span>
+                  <span>Buka Semua ({stats.pab.total ?? 0})</span>
                   <span>→</span>
                 </a>
               </div>
@@ -877,6 +908,7 @@
           </div>
         </div>
       </div>
+      {/if}
     </main>
   </div>
 </div>
@@ -1166,7 +1198,7 @@
     overflow-y: auto;
   }
 
-  .nav-item {
+  .nav-item-btn {
     display: flex;
     align-items: center;
     gap: 0.85rem;
@@ -1176,18 +1208,33 @@
     font-size: 0.85rem;
     font-weight: 600;
     text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
     transition: all 0.2s ease;
   }
 
-  .nav-item:hover {
+  .nav-item-btn:hover {
     background: rgba(255, 255, 255, 0.08);
     color: #ffffff;
   }
 
-  .nav-item.active {
-    background: rgba(255, 255, 255, 0.12);
-    color: #ffffff;
-    font-weight: 700;
+  .nav-item-btn.active {
+    background: #febb2b;
+    color: #1f0a38;
+    font-weight: 800;
+  }
+
+  .clickable-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .clickable-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(18, 6, 36, 0.15);
   }
 
   .nav-icon {
